@@ -7,8 +7,8 @@ const { CreateLink } = require('./db_functions');
 
 const app = express();
 const PORT = 3000;
-const HOST = 'http://localhost';
-const reurlQuery = '?url=';
+const HOST = 'http://localhost:';
+const urlkeyQuery = '/redirect?urlkey=';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -30,6 +30,19 @@ const CheckUrlValid = function UrlValid(url) {
   });
 };
 
+app.get('/redirect', (req, res) => {
+  const key = req.query.urlkey;
+  async function controlFlow() {
+    try {
+      const link = await sql.GetUrlByKey(key);
+      res.redirect(link.URL);
+    } catch (e) {
+      res.end('Error: Invalid link');
+    }
+  }
+  controlFlow();
+});
+
 app.get('/', (req, res) => {
   const originUrl = req.query.url;
 
@@ -40,7 +53,7 @@ app.get('/', (req, res) => {
         const keyByUrl = await sql.GetKeyByUrl(originUrl);
         if (urlValid.isValid) {
           if (keyByUrl.KEY) {
-            res.end(HOST + PORT + reurlQuery + keyByUrl.KEY);
+            res.end(HOST + PORT + urlkeyQuery + keyByUrl.KEY);
           }
         }
       } catch (error) {
@@ -48,7 +61,7 @@ app.get('/', (req, res) => {
         const link = await CreateLink(originUrl, key);
 
         if (link) {
-          res.end(HOST + PORT + reurlQuery + key);
+          res.end(HOST + PORT + urlkeyQuery + key);
         } else {
           res.end('Error: Fail to create link');
         }
@@ -57,19 +70,6 @@ app.get('/', (req, res) => {
       res.end('Error: Invalid URL');
     }
     return false;
-  }
-  controlFlow();
-});
-
-app.get('/redirect', (req, res) => {
-  const key = req.query.urlkey;
-  async function controlFlow() {
-    try {
-      const link = await sql.GetUrlByKey(key);
-      res.redirect(link.URL);
-    } catch (e) {
-      res.end('Error: Invalid link');
-    }
   }
   controlFlow();
 });
