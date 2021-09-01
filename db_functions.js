@@ -73,24 +73,27 @@ module.exports = {
       return false;
     }
   },
-  async createLink(url, key) {
-    try {
-      await Link.upsert({
-        ID: uuid.v4(),
-        URL: url,
-        KEY: key,
-        COUNT: 0,
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
+  CreateLink(url, key) {
+    return Link.upsert({
+      ID: uuid.v4(),
+      URL: url,
+      KEY: key,
+      COUNT: 0,
+    });
   },
-  SearchLink(key) {
+  GetUrlByKey(key) {
     return Link.findOne({
       attributes: ['URL'],
       where: {
         KEY: key,
+      },
+    });
+  },
+  GetKeyByUrl(url) {
+    return Link.findOne({
+      attributes: ['KEY'],
+      where: {
+        URL: url,
       },
     });
   },
