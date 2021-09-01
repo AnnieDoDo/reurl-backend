@@ -2,13 +2,12 @@ const express = require('express');
 const https = require('https');
 const uniqueId = require('uniqid');
 const Console = require('console');
-// const { path } = require('path');
 const sql = require('./db_functions');
 
 const app = express();
 const PORT = 3000;
 const HOST = 'http://localhost';
-const reurlQuery = '?reurl=';
+const reurlQuery = '?url=';
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,20 +40,32 @@ app.get('/', (req, res) => {
       if (UrlValid.isValid) {
         return true;
       }
-      res.end('Invalid URL');
+      res.end('Error: Invalid URL');
     } catch (err) {
-      Console.log('catch', err);
-      res.end('Invalid URL');
+      res.end('Error: Invalid URL');
     }
     return false;
   }
   isUrlValid();
 
   if (!sql.createLink(originUrl, key)) {
-    res.end('Fail to create link');
+    res.end('Error: Fail to create link');
   }
 
   res.end(newUrl);
+});
+
+app.get('/redirect', (req, res) => {
+  const key = req.query.urlkey;
+  async function controlFlow() {
+    try {
+      const link = await sql.SearchLink(key);
+      res.redirect(link.URL);
+    } catch (e) {
+      res.end('Error: Invalid link');
+    }
+  }
+  controlFlow();
 });
 
 app.listen(PORT, () => {

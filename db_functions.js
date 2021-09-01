@@ -86,19 +86,13 @@ module.exports = {
       return false;
     }
   },
-  async SearchLink(key) {
-    try {
-      await Link.findOne({
-        attributes: ['KEY'],
-        where: {
-          Email: key,
-        },
-        raw: true,
-      });
-      return true;
-    } catch (e) {
-      return false;
-    }
+  SearchLink(key) {
+    return Link.findOne({
+      attributes: ['URL'],
+      where: {
+        KEY: key,
+      },
+    });
   },
 
 };
