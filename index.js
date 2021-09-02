@@ -6,7 +6,7 @@ const sql = require('./db_functions');
 const { CreateLink } = require('./db_functions');
 
 const app = express();
-const PORT = 3000;
+const PORT = 3500;
 const HOST = 'http://localhost:';
 const urlkeyQuery = '/redirect?urlkey=';
 

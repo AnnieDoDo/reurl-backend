@@ -33,7 +33,6 @@ const User = sequelize.define('USER', {
   freezeTableName: true,
   timestamps: false,
 });
-Console.log(User === sequelize.models.User);
 
 const Link = sequelize.define('LINK', {
   ID: {
@@ -57,8 +56,6 @@ const Link = sequelize.define('LINK', {
   freezeTableName: true,
   timestamps: false,
 });
-
-Console.log(Link === sequelize.models.Link);
 
 module.exports = {
   async createUser(username, password) {
